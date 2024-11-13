@@ -20,13 +20,14 @@ export default function ModalInput({ isOpen, onClose, onConfirm }: ModalInputPro
             {isOpen && (
                 <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
                 <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-                    <h2 className="text-xl font-semibold mb-4">Inserir Valor</h2>
+                    <h2 className="text-xl font-semibold mb-4">Qual a letra?</h2>
                     <input
-                    type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    className="border border-gray-300 p-2 w-full rounded mb-4"
-                    placeholder="Digite algo..."
+                        type="text"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        className="border border-gray-300 p-2 w-full rounded mb-4"
+                        placeholder="Digite algo..."
+                        maxLength={1}
                     />
                     <div className="flex justify-end space-x-4">
                     <button
