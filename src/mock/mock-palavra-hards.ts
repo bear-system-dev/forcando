@@ -1,6 +1,6 @@
 const palavrasMock = [
     {
-        palavra: 'HomemDeFerro',
+        palavra: 'inicio',
         tema: 'Inicie o Jogo, para sortear o tema:'
       },
     {

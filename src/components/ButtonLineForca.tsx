@@ -1,19 +1,16 @@
 interface ButtonLineForcaProps {
-    letra:string
-    letraDoUsuario:string[]
+    letra: string;
+    letraDoUsuario: string[];
+    setAcertou: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function ButtonLineForca({letra, letraDoUsuario}: ButtonLineForcaProps) {
-    
+export default function ButtonLineForca({ letra, letraDoUsuario,setAcertou }: ButtonLineForcaProps) {
+    const estaNaPalavra = letraDoUsuario.includes(letra);
+
+
     return (
-        <>
-            <button
-                className="w-14 h-12 border-b-4 border-gray-600 bg-transparent"
-            >
-                {
-                    letraDoUsuario.map((l) => l === letra && l)
-                }
-            </button>
-        </>
-    )
-};
+        <button className="w-14 h-12 border-b-4 border-gray-600 bg-transparent">
+            {estaNaPalavra ? letra : ""}
+        </button>
+    );
+}
