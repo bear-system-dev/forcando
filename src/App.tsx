@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BonecoDaForca from './components/BonecoDaForca';
 import ModalInput from './components/ModalInput';
 import ButtonLineForca from './components/ButtonLineForca';
@@ -16,10 +16,17 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [letraDoUsuario, setLetraDoUsuario] = useState<string[]>([])
   const [palavra, setPalavra] = useState<SorteioProps>(palavrasMock[0])
-  const [ acertou, setAcertou ] = useState(true)
+  const [ venceu, setVenceu ] = useState(false)
 
-  console.log(acertou)
-  console.log(letraDoUsuario.join(""))
+  // console.log(acertou)
+  // console.log(letraDoUsuario.join(""))
+
+  let letrasUnificadas = new Set(palavra.palavra.toLocaleUpperCase())
+
+  let letrasCorretas = letraDoUsuario.filter((letra:string) => letrasUnificadas.has(letra.toUpperCase()))
+
+
+
   let indiceDaPalavra = 0
 
   const handleIniciarJogo = () => {
@@ -28,7 +35,15 @@ function App() {
     setPalavra(palavrasMock[indiceDaPalavra])
   }
 
+  useEffect(()=>{
+    console.log("tetse")
+    if (letrasCorretas.length === letrasUnificadas.size) {
+      console.log("dentro da condição:",letrasCorretas.length === letrasUnificadas.size)
+      setVenceu(true)
+    }
+  },[letraDoUsuario])
 
+  console.log(letrasCorretas.length === letrasUnificadas.size)
   const handleConfirm = (inputValue: string): void => {
     setLetraDoUsuario([...letraDoUsuario, inputValue.toUpperCase()]);
   };
@@ -67,7 +82,8 @@ function App() {
                 <p>{letraDoUsuario}</p>
           </div>  
           <ModalInput
-            palavra={letraDoUsuario}
+            letraDoUsuario={letraDoUsuario}
+            palavra={palavra.palavra}
             setDerrota={setDerrota}
             derrota={derrota}
             isOpen={isModalOpen}
@@ -83,7 +99,7 @@ function App() {
                     (
                     <img src="src/assets/bob_esponja_pensando.gif" alt="Descrição do GIF" width="300"/>
                     ):
-                      palavra?.palavra.split("").map((letra) => <ButtonLineForca setAcertou={setAcertou} letraDoUsuario={letraDoUsuario} letra={letra.toUpperCase()}/>) 
+                      palavra?.palavra.split("").map((letra) => <ButtonLineForca letraDoUsuario={letraDoUsuario} letra={letra.toUpperCase()}/>) 
                   }
                   {
                     derrota === 6 && (
@@ -93,10 +109,10 @@ function App() {
                     )
                   }
                     {
-                    letraDoUsuario.includes(palavra.palavra) && (
-                      <p className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-5xl font-bold text-gree-500">
-                        Ganhou
-                      </p>
+                      venceu && (
+                        <p className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-5xl font-bold text-green-500">
+                          Ganhou
+                        </p>
                     )
                   }
                 </div>

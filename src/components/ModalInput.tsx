@@ -1,33 +1,36 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface ModalInputProps {
     isOpen: boolean;
-    palavra: string[];
+    palavra: string;
+    letraDoUsuario: string[]
     onClose: () => void;
     onConfirm: (inputValue: string) => void;
     setDerrota: React.Dispatch<React.SetStateAction<number>>;
     derrota: number;
 }
 
-export default function ModalInput({ isOpen, onClose, onConfirm, palavra, derrota, setDerrota }: ModalInputProps) {
+export default function ModalInput({ isOpen, onClose, onConfirm, palavra, setDerrota }: ModalInputProps) {
     const [inputValue, setInputValue] = useState('');
-    const estaNaPalavra = palavra.includes(inputValue.toUpperCase());
-    
-    
-    console.log(palavra)
+    const [lastConfirmedLetter, setLastConfirmedLetter] = useState<string | null>(null);
 
-    const handleConfirm = () => {
-        onConfirm(inputValue.toUpperCase());
-        
-        if (!estaNaPalavra) {
-            setDerrota((prev) => prev + 1); 
+    useEffect(() => {
+        if (lastConfirmedLetter) {
+            const estaNaPalavra = palavra.toUpperCase().includes(lastConfirmedLetter);
+            if (!estaNaPalavra) {
+                setDerrota((prev) => prev + 1);
+            }
         }
- 
-        setInputValue(''); 
-        onClose(); 
-    };
+    }, [lastConfirmedLetter, palavra, setDerrota]);
 
-    console.log("a letra: ", inputValue, "está contido no: ", palavra, "? ", estaNaPalavra)
+    const handleConfirm = useCallback(() => {
+        const letra = inputValue.toUpperCase();
+        setLastConfirmedLetter(letra);
+        onConfirm(letra);
+        setInputValue(''); 
+        onClose();
+    }, [inputValue, onConfirm, onClose]);
+    
     return (
         <>
             {isOpen && (
