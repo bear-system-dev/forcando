@@ -11,5 +11,5 @@ export default function ButtonLineForca({ letra, letraDoUsuario }: ButtonLineFor
         <button className="w-14 h-12 border-b-4 border-gray-600 bg-transparent">
             {estaNaPalavra ? letra : ""}
         </button>
-    );
+    )
 }

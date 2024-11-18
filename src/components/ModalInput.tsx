@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 interface ModalInputProps {
     isOpen: boolean;
@@ -12,21 +12,17 @@ interface ModalInputProps {
 
 export default function ModalInput({ isOpen, onClose, onConfirm, palavra, setDerrota }: ModalInputProps) {
     const [inputValue, setInputValue] = useState('');
-    const [lastConfirmedLetter, setLastConfirmedLetter] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (lastConfirmedLetter) {
-            const estaNaPalavra = palavra.toUpperCase().includes(lastConfirmedLetter);
-            if (!estaNaPalavra) {
-                setDerrota((prev) => prev + 1);
-            }
-        }
-    }, [lastConfirmedLetter, palavra, setDerrota]);
 
     const handleConfirm = useCallback(() => {
         const letra = inputValue.toUpperCase();
-        setLastConfirmedLetter(letra);
+        const estaNaPalavra = palavra.toUpperCase().includes(letra);
         onConfirm(letra);
+
+        if (!estaNaPalavra) {
+            setDerrota((prev) => prev + 1);
+        }
+
         setInputValue(''); 
         onClose();
     }, [inputValue, onConfirm, onClose]);
