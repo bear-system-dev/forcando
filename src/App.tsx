@@ -37,6 +37,9 @@ function App() {
   let letrasCorretas = letraDoUsuario.filter((letra: string) => letrasUnificadas.has(letra.toUpperCase()))
 
 
+  //inicia o socket com o nome do jogador
+  const { socket } = useEnterRoomUser(jogador)
+
   //a cada letra enviada do usuário ele verifica se o tamanho palavra real é do tamanho da palavra formada
   useEffect(() => {
     if (letrasCorretas.length === letrasUnificadas.size) {
@@ -47,12 +50,12 @@ function App() {
 
   //passado como parametro no modal input para que quando no modal seja confirmado ele adiciona mais uma letra no array de letra do usuario
   const handleConfirm = (inputValue: string): void => {
+    if (socket && jogador) {
+      socket.emit("letraDoUsuario", inputValue.toUpperCase())
+      console.log(inputValue);
+    }
     setLetraDoUsuario([...letraDoUsuario, inputValue.toUpperCase()])
   }
-
-
-  //inicia o socket com o nome do jogador
-  const { socket } = useEnterRoomUser(jogador)
 
   const handleIniciarJogo = useCallback(() => {
     if (socket && jogador) {
@@ -62,9 +65,10 @@ function App() {
     const indiceDaPalavra = Math.floor(Math.random() * palavrasMock.length)
     setLetraDoUsuario([])
     setPalavra(palavrasMock[indiceDaPalavra])
-    
+
     if (socket && jogador) {
       socket.emit("palavra")
+      socket.emit("letras")
     }
   }, [socket, jogador])
 
@@ -87,6 +91,10 @@ function App() {
       })
 
       socket.on('palavra', (palavra: SorteioProps) => { setPalavra(palavra) })
+
+      socket.on('letras', (letras: string[]) => { console.log(letras); setLetraDoUsuario([...letraDoUsuario, ...letras]) })
+
+      socket.on('letraDoUsuario', (inputValue: string) => { setLetraDoUsuario([...letraDoUsuario, inputValue]) })
     }
 
     return () => {
