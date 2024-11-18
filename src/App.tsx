@@ -62,32 +62,38 @@ function App() {
     const indiceDaPalavra = Math.floor(Math.random() * palavrasMock.length)
     setLetraDoUsuario([])
     setPalavra(palavrasMock[indiceDaPalavra])
+    
+    if (socket && jogador) {
+      socket.emit("palavra")
+    }
   }, [socket, jogador])
-  
+
   useEffect(() => {
     if (socket) {
       socket.on("player names", (data: string[]) => {
         setParticipantes(data)
       });
-  
+
       socket.on("join", (novoJogador: string) => {
         setParticipantes((prev) => [...prev, novoJogador]);
       });
 
       socket.on('leave', (nomeJogador: string) => {
-        setParticipantes((prev) => prev.filter((nome)=> nome !== nomeJogador))
+        setParticipantes((prev) => prev.filter((nome) => nome !== nomeJogador))
       })
 
-      socket.on('error', (error:string)=>{
+      socket.on('error', (error: string) => {
         console.log(error)
       })
+
+      socket.on('palavra', (palavra: SorteioProps) => { setPalavra(palavra) })
     }
-  
+
     return () => {
       socket?.off("player names");
       socket?.off("join");
     };
-  }, [socket]);   
+  }, [socket]);
 
   return (
     <>
@@ -102,21 +108,21 @@ function App() {
           </p>
           {
             palavra.palavra === 'inicio' && (
-            <>
-              <input
-                type='text'
-                placeholder='Nome de usuário'
-                className='px-6 py-2 rounded-md my-4'
-                onChange={(e) => setJogador(e.target.value)}
-              />
-              <button
-                onClick={handleIniciarJogo}
-                className='bg-indigo-700 text-2xl text-white px-14 py-2 rounded-md'
-              >
-                Iniciar
-              </button>
-            </>
-          )}
+              <>
+                <input
+                  type='text'
+                  placeholder='Nome de usuário'
+                  className='px-6 py-2 rounded-md my-4'
+                  onChange={(e) => setJogador(e.target.value)}
+                />
+                <button
+                  onClick={handleIniciarJogo}
+                  className='bg-indigo-700 text-2xl text-white px-14 py-2 rounded-md'
+                >
+                  Iniciar
+                </button>
+              </>
+            )}
         </div>
         <div>
           <p>{letraDoUsuario}</p>
@@ -134,11 +140,11 @@ function App() {
           <div className="flex flex-col items-center">
             <div className=" flex space-x-2 ">
               {palavra.palavra === 'inicio' ? (
-                <img src="src/assets/bob_esponja_pensando.gif" alt="Descrição do GIF" width="300"/>
+                <img src="src/assets/bob_esponja_pensando.gif" alt="Descrição do GIF" width="300" />
               ) : (
-                palavra?.palavra.split("").map((letra) => 
+                palavra?.palavra.split("").map((letra) =>
                   <ButtonLineForca
-                    key={letra.toUpperCase()} 
+                    key={letra.toUpperCase()}
                     letraDoUsuario={letraDoUsuario}
                     letra={letra.toUpperCase()}
                   />
@@ -161,9 +167,9 @@ function App() {
           <div className='w-full flex flex-row items-center justify-end  h-[80%] pr-60 pb-10'>
             <div className='flex flex-col items-center justify-start w-[50%] gap-8'>
               <p className='text-xl text-slate-600 '>
-                Agora é a sua vez! digite uma letra: 
+                Agora é a sua vez! digite uma letra:
               </p>
-              <button 
+              <button
                 disabled={derrota === 6}
                 onClick={() => setIsModalOpen(true)}
                 className={`bg-indigo-700 text-white px-10 py-3 rounded-md ${derrota === 6 && 'bg-gray-600'}`}
