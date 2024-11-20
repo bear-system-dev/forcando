@@ -83,6 +83,13 @@ function App() {
     }
 
     return () => {
+      socket?.off("ganhou")
+      socket?.off("letraErrada")
+      socket?.off("letras")
+      socket?.off("letraDoUsuario")
+      socket?.off("error")
+      socket?.off("palavra")
+      socket?.off("leave")
       socket?.off("player names");
       socket?.off("join");
     };
@@ -141,7 +148,7 @@ function App() {
           <div className="flex flex-col items-center">
             <div className=" flex space-x-2 ">
               {palavra.palavra === 'inicio' ? (
-                <img src="src/assets/bob_esponja_pensando.gif" alt="Descrição do GIF" width="300" />
+                <img src="src/assets/bobesponjapensando.gif" alt="Descrição do GIF" width="300" />
               ) : (
                 palavra?.palavra.split("").map((letra) =>
                   <ButtonLineForca
