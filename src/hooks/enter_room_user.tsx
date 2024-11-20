@@ -16,7 +16,6 @@ export default function useEnterRoomUser(jogador: string) {
                 }
             });
             setSocket(socketIns);
-
             return () => {
                 socketIns.disconnect(); 
             };

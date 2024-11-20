@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import BonecoDaForca from './components/BonecoDaForca';
 import ModalInput from './components/ModalInput';
 import ButtonLineForca from './components/ButtonLineForca';
-import palavrasMock from './mock/mock-palavra-hards';
 import Participante from './components/Participante';
 import useEnterRoomUser from './hooks/enter_room_user';
+import palavrasMock from './mock/mock-palavra-hards';
 
 interface SorteioProps {
   palavra: string
@@ -12,47 +12,31 @@ interface SorteioProps {
 }
 
 function App() {
-  // modal de input
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
-
-  // participantes da sala
   const [participantes, setParticipantes] = useState<string[]>([])
-  //nome do jogador
   const [jogador, setJogador] = useState("")
 
-
   const [derrota, setDerrota] = useState(0)
-  //letras digitadas do usuário
   const [letraDoUsuario, setLetraDoUsuario] = useState<string[]>([])
-  //palavra sorteada
-  const [palavra, setPalavra] = useState<SorteioProps>(palavrasMock[0])
-  //variavel que diz se o usuario venceu
+  const [palavra, setPalavra] = useState(palavrasMock[0])
   const [venceu, setVenceu] = useState(false)
 
-
-  //tira a repetição de letras ex: onepiece ficaria = onepic
-  let letrasUnificadas = new Set(palavra.palavra.toLocaleUpperCase())
-  //faz uma filtragem no array de letras digitadas e verifica as letras corretas
-  let letrasCorretas = letraDoUsuario.filter((letra: string) => letrasUnificadas.has(letra.toUpperCase()))
-
-
-  //inicia o socket com o nome do jogador
   const { socket } = useEnterRoomUser(jogador)
 
-  //a cada letra enviada do usuário ele verifica se o tamanho palavra real é do tamanho da palavra formada
   useEffect(() => {
-    if (letrasCorretas.length === letrasUnificadas.size) {
-      setVenceu(true)
-    }
+   
+    socket?.emit("letras")
+    socket?.emit("letraErrada")
+
   }, [letraDoUsuario])
 
-
-  //passado como parametro no modal input para que quando no modal seja confirmado ele adiciona mais uma letra no array de letra do usuario
   const handleConfirm = (inputValue: string): void => {
     if (socket && jogador) {
       socket.emit("letraDoUsuario", inputValue.toUpperCase())
-      console.log(inputValue);
+      socket.emit("letras")
+      socket.emit("letraErrada")
+      socket.emit("ganhou")
     }
     setLetraDoUsuario([...letraDoUsuario, inputValue.toUpperCase()])
   }
@@ -62,13 +46,10 @@ function App() {
       socket.emit("join", jogador)
     }
 
-    const indiceDaPalavra = Math.floor(Math.random() * palavrasMock.length)
-    setLetraDoUsuario([])
-    setPalavra(palavrasMock[indiceDaPalavra])
-
     if (socket && jogador) {
       socket.emit("palavra")
       socket.emit("letras")
+      socket.emit("letraErrada")
     }
   }, [socket, jogador])
 
@@ -92,9 +73,13 @@ function App() {
 
       socket.on('palavra', (palavra: SorteioProps) => { setPalavra(palavra) })
 
-      socket.on('letras', (letras: string[]) => { console.log(letras); setLetraDoUsuario([...letraDoUsuario, ...letras]) })
-
       socket.on('letraDoUsuario', (inputValue: string) => { setLetraDoUsuario([...letraDoUsuario, inputValue]) })
+      
+      socket.on('letras', (letras: string[]) => { 
+        setLetraDoUsuario([...letraDoUsuario, ... letras]) 
+      })
+      socket.on('letraErrada', (letra: string) => { letra && setDerrota(prev => prev + 1)})
+      socket.on('ganhou', (isGanhou: boolean) => { isGanhou && setVenceu(isGanhou)})
     }
 
     return () => {
@@ -133,9 +118,17 @@ function App() {
             )}
         </div>
         <div>
+
+
+
           <p>{letraDoUsuario}</p>
+
+
+
+          
         </div>
         <ModalInput
+          jogador={jogador}
           letraDoUsuario={letraDoUsuario}
           palavra={palavra.palavra}
           setDerrota={setDerrota}

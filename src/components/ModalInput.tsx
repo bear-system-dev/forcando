@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 interface ModalInputProps {
     isOpen: boolean;
     palavra: string;
+    jogador: string
     letraDoUsuario: string[]
     onClose: () => void;
     onConfirm: (inputValue: string) => void;
@@ -14,15 +15,15 @@ export default function ModalInput({ isOpen, onClose, onConfirm, palavra, setDer
     const [inputValue, setInputValue] = useState('');
 
 
+
+
     const handleConfirm = useCallback(() => {
         const letra = inputValue.toUpperCase();
         const estaNaPalavra = palavra.toUpperCase().includes(letra);
         onConfirm(letra);
-
         if (!estaNaPalavra) {
             setDerrota((prev) => prev + 1);
         }
-
         setInputValue(''); 
         onClose();
     }, [inputValue, onConfirm, onClose]);
