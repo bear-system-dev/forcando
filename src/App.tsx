@@ -99,11 +99,11 @@ function App() {
     <>
       {palavra.palavra !== 'inicio' && <BonecoDaForca derrota={derrota} />}
       <div className="flex flex-col items-center justify-between w-[100vw] h-[100vh] overflow-hidden bg-slate-100">
-        <div className='flex flex-col items-center justify-center w-full py-10'>
-          <p className='text-center font-bold text-indigo-950 text-3xl py-2 border-b-2 border-red-500'>
+        <div className='flex flex-col items-center justify-center w-full  py-4 md:py-10'>
+          <p className='text-center font-bold text-indigo-950 text-3xl md:py-2 border-b-2 border-red-500'>
             Forcando
           </p>
-          <p className='w-full text-center text-slate-600 text-3xl py-4'>
+          <p className='w-full text-center text-slate-600 md:text-3xl py-4'>
             {palavra?.tema}
           </p>
           {
@@ -125,13 +125,7 @@ function App() {
             )}
         </div>
         <div>
-
-
-
           <p>{letraDoUsuario}</p>
-
-
-
           
         </div>
         <ModalInput
@@ -159,12 +153,12 @@ function App() {
                 )
               )}
               {derrota === 6 && (
-                <p className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-5xl font-bold text-red-500">
+                <p className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl md:text-5xl font-bold text-red-500">
                   Você perdeu
                 </p>
               )}
               {venceu && (
-                <p className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-5xl font-bold text-green-500">
+                <p className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl md:text-5xl font-bold text-green-500">
                   Ganhou
                 </p>
               )}
@@ -172,8 +166,8 @@ function App() {
           </div>
         </div>
         {palavra.palavra !== 'inicio' && (
-          <div className='w-full flex flex-row items-center justify-end  h-[80%] pr-60 pb-10'>
-            <div className='flex flex-col items-center justify-start w-[50%] gap-8'>
+          <div className='w-full flex flex-col md:flex-row items-center  justify-end  h-[80%] md:pr-60 pb-10'>
+            <div className='flex flex-col items-center justify-start w-full md:w-[50%] gap-8'>
               <p className='text-xl text-slate-600 '>
                 Agora é a sua vez! digite uma letra:
               </p>
